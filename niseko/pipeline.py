@@ -6,7 +6,10 @@ import pandas as pd
 from .export import convert_pipeline_to_script
 
 
-class NisekoPipelineStep:
+class PipelineStep:
+    """
+    Pipeline step.
+    """
 
     def __init__(self, step):
         self.primitive = step['primitive']['name']
@@ -33,7 +36,10 @@ class NisekoPipelineStep:
                                                          self.hyperparameters.items()))))
 
 
-class NisekoPipelineRun:
+class PipelineRun:
+    """
+    This class stores the information of a pipeline run.
+    """
 
     def __init__(self, row):
         self._row = row
@@ -58,7 +64,10 @@ class NisekoPipelineRun:
         return self._row['validation_error']
 
 
-class NisekoPipeline:
+class Pipeline:
+    """
+    Pipeline class.
+    """
 
     def __init__(self):
         self._pipeline_runs = None
@@ -110,7 +119,7 @@ class NisekoPipeline:
             try:
                 progression = pd.DataFrame.from_dict(json.loads(self.pipeline_json['metrics']['progression']))
                 for _, pipeline_run in progression.iterrows():
-                    pipeline_runs.append(NisekoPipelineRun(pipeline_run))
+                    pipeline_runs.append(PipelineRun(pipeline_run))
             except BaseException:
                 pass
             self.pipeline_runs = pipeline_runs
@@ -148,7 +157,7 @@ class NisekoPipeline:
 
     @staticmethod
     def load_from_json(pipeline_json):
-        pipeline = NisekoPipeline()
+        pipeline = Pipeline()
         pipeline.score = pipeline_json['metrics']['score']
         pipeline.model = pipeline_json['tags']['model']
 
@@ -157,7 +166,7 @@ class NisekoPipeline:
         raw_steps = []
         for step in pipeline_json['pipeline']['steps']:
             primitives.append(step['primitive']['name'])
-            steps.append(NisekoPipelineStep(step))
+            steps.append(PipelineStep(step))
             raw_steps.append(step)
         pipeline.primitives = primitives
         pipeline.steps = steps

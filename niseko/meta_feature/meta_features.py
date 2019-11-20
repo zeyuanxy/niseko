@@ -1,3 +1,7 @@
+# pylint: disable=missing-docstring, unused-argument, invalid-name, no-else-return, len-as-condition,
+# pylint: disable=redefined-builtin, simplifiable-if-expression, unused-variable, pointless-string-statement
+# pylint: disable=no-else-raise
+
 from collections import defaultdict, OrderedDict, deque
 import copy
 
@@ -17,7 +21,7 @@ from .meta_feature import MetaFeature, HelperFunction, DatasetMetafeatures
 
 # TODO Allow multiple dependencies for a metafeature
 # TODO Add HelperFunction as an object
-class HelperFunctions(object):
+class HelperFunctions:
     def __init__(self):
         self.functions = OrderedDict()
         self.values = OrderedDict()
@@ -66,7 +70,7 @@ class HelperFunctions(object):
         return wrapper
 
 
-class MetafeatureFunctions(object):
+class MetafeatureFunctions:
     def __init__(self):
         self.functions = OrderedDict()
         self.dependencies = OrderedDict()
@@ -216,8 +220,7 @@ class NumberOfFeaturesWithMissingValues(MetaFeature):
         missing = helper_functions.get_value("MissingValues")
         new_missing = missing.tocsc()
         num_missing = [np.sum(
-            new_missing.data[new_missing.indptr[i]:new_missing.indptr[i + 1]])
-            for i in range(missing.shape[1])]
+            new_missing.data[new_missing.indptr[i]:new_missing.indptr[i + 1]]) for i in range(missing.shape[1])]
 
         return float(np.sum([1 if num > 0 else 0 for num in num_missing]))
 
@@ -240,7 +243,7 @@ class NumberOfMissingValues(MetaFeature):
                      dependency="NumberOfMissingValues")
 class PercentageOfMissingValues(MetaFeature):
     def _calculate(self, X, y, categorical):
-        return float(metafeatures.get_value("NumberOfMissingValues")) \ float(X.shape[0] * X.shape[1])
+        return float(metafeatures.get_value("NumberOfMissingValues")) / float(X.shape[0] * X.shape[1])
 
 
 # TODO: generalize this!

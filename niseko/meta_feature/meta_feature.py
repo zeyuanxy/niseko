@@ -1,3 +1,7 @@
+"""Meta feature class.
+Adopted from https://github.com/automl/auto-sklearn/tree/master/autosklearn/metalearning/metafeatures"""
+# pylint: disable=invalid-name, redefined-outer-name, redefined-builtin
+
 from abc import ABCMeta, abstractmethod
 from io import StringIO
 import time
@@ -7,6 +11,8 @@ import scipy.sparse
 
 
 class AbstractMetaFeature:
+    """Abstract class for meta feature."""
+
     __metaclass__ = ABCMeta
 
     @abstractmethod
@@ -14,7 +20,7 @@ class AbstractMetaFeature:
         pass
 
     @abstractmethod
-    def _calculate(cls, X, y, categorical):
+    def _calculate(self, X, y, categorical):
         pass
 
     def __call__(self, X, y, categorical=None):
@@ -38,18 +44,30 @@ class AbstractMetaFeature:
 
 
 class MetaFeature(AbstractMetaFeature):
+
     def __init__(self):
         super(MetaFeature, self).__init__()
         self.type_ = "METAFEATURE"
 
+    @abstractmethod
+    def _calculate(self, X, y, categorical):
+        pass
+
 
 class HelperFunction(AbstractMetaFeature):
+
     def __init__(self):
         super(HelperFunction, self).__init__()
         self.type_ = "HELPERFUNCTION"
 
+    @abstractmethod
+    def _calculate(self, X, y, categorical):
+        pass
+
 
 class MetaFeatureValue:
+    """Value for meta feature."""
+
     def __init__(self, name, type_, fold, repeat, value, time, comment=""):
         self.name = name
         self.type_ = type_
@@ -78,12 +96,18 @@ class MetaFeatureValue:
 
 
 class DatasetMetafeatures:
+    """Meat features class for a dataset."""
 
     def __init__(self, dataset_name, metafeature_values):
         self.dataset_name = dataset_name
         self.metafeature_values = metafeature_values
 
     def _get_arff(self):
+        """
+        make a dict of description to be exported as an arff file.
+        :return:
+        """
+
         output = dict()
         output['relation'] = "metafeatures_%s" % (self.dataset_name)
         output['description'] = ""
@@ -114,6 +138,11 @@ class DatasetMetafeatures:
 
     @classmethod
     def load(cls, path_or_filehandle):
+        """
+        Load from an arff file.
+        :param path_or_filehandle:
+        :return:
+        """
 
         if isinstance(path_or_filehandle, str):
             with open(path_or_filehandle) as fh:

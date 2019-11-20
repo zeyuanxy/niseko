@@ -1,3 +1,5 @@
+"""Niseko export utilities."""
+
 import os
 import inspect
 
@@ -9,6 +11,12 @@ def get_method_arguments(method):
 
 
 def convert_pipeline_to_script(steps):
+    """
+    Convert a pipeline to a executable script.
+    :param steps:
+    :return:
+    """
+
     with open(os.path.join(os.path.dirname(__file__), 'pipeline_script.template')) as f:
         pipeline_script_template = f.read()
 
@@ -22,7 +30,7 @@ def convert_pipeline_to_script(steps):
         primitive_code += 'from {} import {}\n'.format(module_name, class_name)
 
         # primitive constructor code
-        parameters = {key: value for key, value in step['primitive'].get('humanReadableParameters', {}).items()}
+        parameters = step['primitive'].get('humanReadableParameters', {}).items()
         if primitive_path.startswith('blinded'):
             primitive_code += 'parameters = {}\n'
             for key, value in parameters.items():
@@ -56,13 +64,13 @@ def convert_pipeline_to_script(steps):
                     training_arguments[argument] = value
 
         # primitive train code
-        if len(training_arguments) > 0:
+        if training_arguments:
             primitive_code += 'primitive.set_training_data({})\n'.format(
                 ', '.join('{}={}'.format(key, value) for key, value in training_arguments.items()))
             primitive_code += 'primitive.fit()\n'
 
         # primitive produce code
-        if len(produce_arguments) > 0:
+        if produce_arguments:
             primitive_code += 'step_{}_output = primitive.produce({}).value\n'.format(
                 step_index, ', '.join('{}={}'.format(key, value) for key, value in produce_arguments.items()))
 
