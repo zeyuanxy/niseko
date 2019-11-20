@@ -25,12 +25,12 @@ def convert_pipeline_to_script(steps):
         primitive_code = ''
 
         # import code
-        primitive_path = get_primitive_path(step['primitive']['name'])
+        primitive_path = get_primitive_path(step.primitive)
         module_name, class_name = '.'.join(primitive_path.split('.')[:-1]), primitive_path.split('.')[-1]
         primitive_code += 'from {} import {}\n'.format(module_name, class_name)
 
         # primitive constructor code
-        parameters = step['primitive'].get('humanReadableParameters', {}).items()
+        parameters = step.hyperparameters.items()
         if primitive_path.startswith('blinded'):
             primitive_code += 'parameters = {}\n'
             for key, value in parameters.items():
@@ -43,7 +43,7 @@ def convert_pipeline_to_script(steps):
             primitive_code += 'primitive = PrimitiveWrapper({class_name}(**parameters))\n'.format(class_name=class_name)
         # primitive arguments
         step_inputs = {}
-        for key, value in step['inputs'].items():
+        for key, value in step.inputs.items():
             if value.startswith('inputs.'):
                 step_inputs[key] = 'dataset'
             else:

@@ -1,3 +1,6 @@
+"""Niseko primitives."""
+# pylint: disable=no-else-return
+
 from abc import ABC, abstractmethod
 from collections import namedtuple
 
@@ -30,9 +33,13 @@ CallResult.__new__.__defaults__ = (None,) * len(CallResult._fields)
 
 
 class SKLearnPrimitive(BasePrimitive):
+    """
+    Sklearn primitive wrapper.
+    """
 
     def __init__(self, primitive):
         self.primitive = primitive
+        super().__init__()
 
     def set_training_data(self, inputs, outputs=None):
         self._inputs = inputs
@@ -55,8 +62,11 @@ class SKLearnPrimitive(BasePrimitive):
 
 
 class XGBoostPrimitive(SKLearnPrimitive):
+    """
+    Xgboost primitive wrapper.
+    """
 
-    def set_training_data(self, inputs, outputs):
+    def set_training_data(self, inputs, outputs=None):
         if isinstance(inputs, pd.DataFrame):
             inputs = inputs.values
 

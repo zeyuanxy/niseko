@@ -1,4 +1,5 @@
 """Niseko dataset."""
+# pylint: disable=broad-except
 
 import os
 import json
@@ -11,7 +12,10 @@ from .meta_feature.meta_feature import DatasetMetafeatures
 from .pipeline import NisekoPipeline, NisekoPipelineRun
 
 
-class NisekoDataset:
+class Dataset:
+    """
+    Dataset class.
+    """
 
     def __init__(self, dataset_id, task_type, data_dir):
         self._dataset_id = dataset_id
@@ -48,6 +52,15 @@ class NisekoDataset:
         print(self.meta_features)
 
     def get_pipelines(self, order_by=None, num=None, clean=True, normalize=False):
+        """
+        Get all pipelines.
+        :param order_by:
+        :param num:
+        :param clean:
+        :param normalize:
+        :return:
+        """
+
         pipelines = self._get_pipelines()
 
         if clean:
@@ -69,10 +82,15 @@ class NisekoDataset:
         return pipelines
 
     def get_pipeline_runs(self):
-        for index, row in self._get_pipeline_runs().iterrows():
+        for _, row in self._get_pipeline_runs().iterrows():
             yield NisekoPipelineRun(row)
 
     def _get_pipelines(self):
+        """
+        Get all pipelines.
+        :return:
+        """
+
         all_pipelines = []
         read_files = set()
         for root_dir, sub_dirs, _ in os.walk(self._data_dir):
@@ -102,6 +120,12 @@ class NisekoDataset:
         return all_pipelines
 
     def _clean_pipelines(self, pipelines):
+        """
+        Get the cleaned pipelines.
+        :param pipelines:
+        :return:
+        """
+
         if self.task_type == 'REGRESSION':
             scores = np.array(list(map(lambda pipeline: pipeline.score, pipelines)))
             scores = scores[~np.isnan(scores)]
@@ -123,12 +147,23 @@ class NisekoDataset:
         return cleaned_pipelines
 
     def _normalize_pipelines(self, pipelines):
+        """
+        Normalize the scores of pipelines.
+        :param pipelines:
+        :return:
+        """
+
         scores = np.array(list(map(lambda pipeline: pipeline.score, pipelines)))
         score_mean, score_std = np.mean(scores), np.std(scores)
         for pipeline in pipelines:
             pipeline.score = (pipeline.score - score_mean) / score_std
 
     def _get_pipeline_runs(self):
+        """
+        Get all pipeline runs.
+        :return:
+        """
+
         all_pipeline_runs = []
         read_files = set()
         for root_dir, sub_dirs, _ in os.walk(self.dumps_dir):

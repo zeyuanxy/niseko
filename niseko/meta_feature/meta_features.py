@@ -1,6 +1,6 @@
 # pylint: disable=missing-docstring, unused-argument, invalid-name, no-else-return, len-as-condition,
 # pylint: disable=redefined-builtin, simplifiable-if-expression, unused-variable, pointless-string-statement
-# pylint: disable=no-else-raise
+# pylint: disable=no-else-raise, unnecessary-comprehension
 
 from collections import defaultdict, OrderedDict, deque
 import copy
