@@ -1,0 +1,6 @@
+numpy
+pandas
+jupyter
+seaborn
+pandas
+auto-sklearn

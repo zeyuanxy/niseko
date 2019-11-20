@@ -1,0 +1,45 @@
+import sys
+from collections import namedtuple
+
+import pandas as pd
+
+from alpine_meadow.common import D3MDataset
+
+
+CallResult = namedtuple('CallResult', ['value'])
+CallResult.__new__.__defaults__ = (None,) * len(CallResult._fields)
+
+
+# helper class for primitive
+class PrimitiveWrapper:
+
+    def __init__(self, primitive):
+        self.primitive = primitive
+
+    def set_training_data(self, inputs, outputs=None):
+        self._inputs = inputs
+        self._outputs = outputs
+
+    def fit(self):
+        if self._outputs is None:
+            self.primitive.fit(self._inputs)
+        else:
+            self.primitive.fit(self._inputs, self._outputs)
+
+        self._inputs = None
+        self._outputs = None
+
+    def produce(self, inputs):
+        if getattr(self.primitive, "predict", None):
+            return CallResult(pd.DataFrame(self.primitive.predict(inputs)))
+        else:
+            return CallResult(pd.DataFrame(self.primitive.transform(inputs)))
+
+
+# arguments
+dataset_path = sys.argv[1]
+
+# load datasets
+dataset = D3MDataset(dataset_path).get_dataset()
+
+{primitives_code}
