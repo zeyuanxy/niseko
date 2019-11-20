@@ -12,8 +12,7 @@ from sklearn.preprocessing import Imputer
 from .one_hot_encoder import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
 
-from .meta_feature import MetaFeature, HelperFunction, DatasetMetafeatures, \
-    MetaFeatureValue
+from .meta_feature import MetaFeature, HelperFunction, DatasetMetafeatures
 
 
 # TODO Allow multiple dependencies for a metafeature
@@ -126,8 +125,6 @@ metafeatures = MetafeatureFunctions()
 helper_functions = HelperFunctions()
 
 
-################################################################################
-### Simple features
 @metafeatures.define("NumberOfInstances")
 class NumberOfInstances(MetaFeature):
     def _calculate(self, X, y, categorical):
@@ -208,8 +205,7 @@ class PercentageOfInstancesWithMissingValues(MetaFeature):
                      / float(metafeatures["NumberOfInstances"](X, y).value))
 
 
-@metafeatures.define("NumberOfFeaturesWithMissingValues",
-                     dependency="MissingValues")
+@metafeatures.define("NumberOfFeaturesWithMissingValues", dependency="MissingValues")
 class NumberOfFeaturesWithMissingValues(MetaFeature):
     def _calculate(self, X, y, categorical):
         missing = helper_functions.get_value("MissingValues")
@@ -230,7 +226,7 @@ class NumberOfFeaturesWithMissingValues(MetaFeature):
                      dependency="NumberOfFeaturesWithMissingValues")
 class PercentageOfFeaturesWithMissingValues(MetaFeature):
     def _calculate(self, X, y, categorical):
-        return float(metafeatures.get_value("NumberOfFeaturesWithMissingValues") \
+        return float(metafeatures.get_value("NumberOfFeaturesWithMissingValues")
                      / float(metafeatures["NumberOfFeatures"](X, y).value))
 
 
@@ -244,8 +240,7 @@ class NumberOfMissingValues(MetaFeature):
                      dependency="NumberOfMissingValues")
 class PercentageOfMissingValues(MetaFeature):
     def _calculate(self, X, y, categorical):
-        return float(metafeatures.get_value("NumberOfMissingValues")) / \
-               float(X.shape[0] * X.shape[1])
+        return float(metafeatures.get_value("NumberOfMissingValues")) \ float(X.shape[0] * X.shape[1])
 
 
 # TODO: generalize this!
@@ -264,10 +259,8 @@ class NumberOfCategoricalFeatures(MetaFeature):
 @metafeatures.define("RatioNumericalToNominal")
 class RatioNumericalToNominal(MetaFeature):
     def _calculate(self, X, y, categorical):
-        num_categorical = float(metafeatures[
-                                    "NumberOfCategoricalFeatures"](X, y, categorical).value)
-        num_numerical = float(metafeatures[
-                                  "NumberOfNumericFeatures"](X, y, categorical).value)
+        num_categorical = float(metafeatures["NumberOfCategoricalFeatures"](X, y, categorical).value)
+        num_numerical = float(metafeatures["NumberOfNumericFeatures"](X, y, categorical).value)
         if num_categorical == 0.0:
             return 0.
         return num_numerical / num_categorical
@@ -276,10 +269,8 @@ class RatioNumericalToNominal(MetaFeature):
 @metafeatures.define("RatioNominalToNumerical")
 class RatioNominalToNumerical(MetaFeature):
     def _calculate(self, X, y, categorical):
-        num_categorical = float(metafeatures[
-                                    "NumberOfCategoricalFeatures"](X, y, categorical).value)
-        num_numerical = float(metafeatures[
-                                  "NumberOfNumericFeatures"](X, y, categorical).value)
+        num_categorical = float(metafeatures["NumberOfCategoricalFeatures"](X, y, categorical).value)
+        num_numerical = float(metafeatures["NumberOfNumericFeatures"](X, y, categorical).value)
         if num_numerical == 0.0:
             return 0.
         else:
@@ -291,7 +282,7 @@ class RatioNominalToNumerical(MetaFeature):
 class DatasetRatio(MetaFeature):
     def _calculate(self, X, y, categorical):
         return float(metafeatures["NumberOfFeatures"](X, y).value) / \
-               float(metafeatures["NumberOfInstances"](X, y).value)
+            float(metafeatures["NumberOfInstances"](X, y).value)
 
 
 @metafeatures.define("LogDatasetRatio", dependency="DatasetRatio")
@@ -304,7 +295,7 @@ class LogDatasetRatio(MetaFeature):
 class InverseDatasetRatio(MetaFeature):
     def _calculate(self, X, y, categorical):
         return float(metafeatures["NumberOfInstances"](X, y).value) / \
-               float(metafeatures["NumberOfFeatures"](X, y).value)
+            float(metafeatures["NumberOfFeatures"](X, y).value)
 
 
 @metafeatures.define("LogInverseDatasetRatio",
@@ -666,9 +657,9 @@ class LandmarkLDA(MetaFeature):
                 predictions = lda.predict(X[test])
                 accuracy += sklearn.metrics.accuracy_score(predictions, y[test])
             return accuracy / 10
-        except scipy.linalg.LinAlgError as e:
+        except scipy.linalg.LinAlgError:
             return np.NaN
-        except ValueError as e:
+        except ValueError:
             return np.NaN
 
     def _calculate_sparse(self, X, y, categorical):
@@ -867,7 +858,7 @@ class PCA(HelperFunction):
                 rs.shuffle(indices)
                 pca.fit(X[indices])
                 return pca
-            except LinAlgError as e:
+            except LinAlgError:
                 pass
         return None
 
@@ -885,7 +876,7 @@ class PCA(HelperFunction):
                     algorithm="randomized")
                 truncated_svd.fit(Xt[indices])
                 return truncated_svd
-            except LinAlgError as e:
+            except LinAlgError:
                 pass
         return None
 
@@ -1120,4 +1111,3 @@ subsets["bardenet_2013_nn"] = set(["number_of_classes",
                                    "log_inverse_dataset_ratio",
                                    "pca_kurtosis_first_pc",
                                    "pca_skewness_first_pc"])
-

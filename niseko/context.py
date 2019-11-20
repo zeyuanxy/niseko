@@ -8,6 +8,9 @@ from .dataset import NisekoDataset
 
 
 class NisekoContext:
+    """
+    Niseko context class, this is the entry point for Niseko.
+    """
 
     def __init__(self, data_dir):
         self._data_dir = data_dir

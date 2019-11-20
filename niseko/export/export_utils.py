@@ -1,5 +1,4 @@
 import os
-import pickle
 import inspect
 
 from .execution_plan import get_primitive_path
@@ -58,12 +57,14 @@ def convert_pipeline_to_script(steps):
 
         # primitive train code
         if len(training_arguments) > 0:
-            primitive_code += 'primitive.set_training_data({})\n'.format(', '.join('{}={}'.format(key, value) for key, value in training_arguments.items()))
+            primitive_code += 'primitive.set_training_data({})\n'.format(
+                ', '.join('{}={}'.format(key, value) for key, value in training_arguments.items()))
             primitive_code += 'primitive.fit()\n'
 
         # primitive produce code
         if len(produce_arguments) > 0:
-            primitive_code += 'step_{}_output = primitive.produce({}).value\n'.format(step_index, ', '.join('{}={}'.format(key, value) for key, value in produce_arguments.items()))
+            primitive_code += 'step_{}_output = primitive.produce({}).value\n'.format(
+                step_index, ', '.join('{}={}'.format(key, value) for key, value in produce_arguments.items()))
 
         primitives_code += primitive_code + '\n'
 

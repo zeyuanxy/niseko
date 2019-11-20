@@ -84,7 +84,7 @@ class NisekoDataset:
                         pipelines = json.load(f)
                     for pipeline in pipelines:
                         all_pipelines.append(NisekoPipeline.load_from_json(pipeline))
-                except:
+                except BaseException:
                     traceback.print_exc()
 
             for sub_dir in sub_dirs:
@@ -96,7 +96,7 @@ class NisekoDataset:
                             pipelines = json.load(f)
                         for pipeline in pipelines:
                             all_pipelines.append(NisekoPipeline.load_from_json(pipeline))
-                    except:
+                    except BaseException:
                         pass
 
         return all_pipelines
@@ -139,7 +139,7 @@ class NisekoDataset:
                     with open(pipeline_runs_path, 'r') as f:
                         pipeline_runs = pd.read_csv(f)
                     all_pipeline_runs.append(pipeline_runs)
-                except:
+                except BaseException:
                     pass
 
             for sub_dir in sub_dirs:
@@ -150,7 +150,7 @@ class NisekoDataset:
                         with open(pipeline_runs_path, 'r') as f:
                             pipeline_runs = pd.read_csv(f)
                         all_pipeline_runs.append(pipeline_runs)
-                    except:
+                    except BaseException:
                         pass
 
         if all_pipeline_runs:

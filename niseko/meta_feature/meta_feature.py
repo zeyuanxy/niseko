@@ -6,7 +6,7 @@ import arff
 import scipy.sparse
 
 
-class AbstractMetaFeature(object):
+class AbstractMetaFeature:
     __metaclass__ = ABCMeta
 
     @abstractmethod
@@ -28,13 +28,13 @@ class AbstractMetaFeature(object):
             else:
                 value = self._calculate(X, y, categorical)
             comment = ""
-        except MemoryError as e:
+        except MemoryError:
             value = None
             comment = "Memory Error"
 
         endtime = time.time()
         return MetaFeatureValue(self.__class__.__name__, self.type_,
-                                0, 0, value, endtime-starttime, comment=comment)
+                                0, 0, value, endtime - starttime, comment=comment)
 
 
 class MetaFeature(AbstractMetaFeature):
@@ -49,7 +49,7 @@ class HelperFunction(AbstractMetaFeature):
         self.type_ = "HELPERFUNCTION"
 
 
-class MetaFeatureValue(object):
+class MetaFeatureValue:
     def __init__(self, name, type_, fold, repeat, value, time, comment=""):
         self.name = name
         self.type_ = type_
@@ -76,7 +76,9 @@ class MetaFeatureValue(object):
                             self.to_arff_row()[5:])
         return repr
 
-class DatasetMetafeatures(object):
+
+class DatasetMetafeatures:
+
     def __init__(self, dataset_name, metafeature_values):
         self.dataset_name = dataset_name
         self.metafeature_values = metafeature_values
@@ -138,8 +140,7 @@ class DatasetMetafeatures(object):
                            (str(name), str(self.metafeature_values[name].value)))
             elif verbosity >= 1:
                 repr.write("  %s: %10s  (%10fs)\n" %
-                           (str(name), str(self.metafeature_values[
-                                               name].value)[:10],
+                           (str(name), str(self.metafeature_values[name].value)[:10],
                             self.metafeature_values[name].time))
 
             # Add the reason for a crash if one happened!

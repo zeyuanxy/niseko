@@ -1,9 +1,6 @@
 import sys
-import os
-import glob
 
 from setuptools import setup, find_packages
-from setuptools.extension import Extension
 
 
 # check Python version
@@ -16,7 +13,7 @@ if sys.version_info < (3, 6):
 packages = find_packages(where='.')
 with open('requirements.txt') as f:
     install_requires = [r.rstrip() for r in f.readlines()
-                    if not r.startswith('#') and not r.startswith('git+')]
+                        if not r.startswith('#') and not r.startswith('git+')]
 
 setup(
     name='niseko',

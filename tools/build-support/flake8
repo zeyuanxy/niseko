@@ -13,9 +13,11 @@ ignore=
     # E402 module level import not at top of file
     E402,
     # may be undefined, or defined from star imports
-    F405
+    F405,
     # E999 SyntaxError: invalid syntax
-    E999
+    E999,
+    # W503 line break before binary operator
+    W503,
     # W504 line break after binary operator
     W504
 

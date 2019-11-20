@@ -1,6 +1,3 @@
-import importlib
-import time
-import logging
 from abc import ABC, abstractmethod
 from collections import namedtuple
 
@@ -56,9 +53,6 @@ class SKLearnPrimitive(BasePrimitive):
         else:
             return CallResult(pd.DataFrame(self.primitive.transform(inputs)))
 
-    def is_warm_start(self):
-        return 'warm_start' in inspect.signature(self.primitive.__init__).parameters.keys()
-
 
 class XGBoostPrimitive(SKLearnPrimitive):
 
@@ -100,7 +94,7 @@ LOGICAL_TO_PHYSICAL_TABLE = {
     'PolynomialFeatures': 'sklearn.preprocessing.PolynomialFeatures',
     'SelectPercentile': 'sklearn.feature_selection.SelectPercentile',
     'GenericUnivariateSelect': 'sklearn.feature_selection.GenericUnivariateSelect',
-    # 'SelectKBest': 'sklearn.feature_selection.SelectKBest', # missing
+    # 'SelectKBest': 'sklearn.feature_selection.SelectKBest',  # missing
     'VarianceThreshold': 'sklearn.feature_selection.VarianceThreshold',
     'FeatureAgglomeration': 'sklearn.cluster.FeatureAgglomeration',
     'RBFSampler': 'sklearn.kernel_approximation.RBFSampler',
@@ -113,7 +107,7 @@ LOGICAL_TO_PHYSICAL_TABLE = {
     'SGDClassifier': 'sklearn.linear_model.SGDClassifier',
     'RandomForestClassifier': 'sklearn.ensemble.RandomForestClassifier',
     'GaussianNB': 'sklearn.naive_bayes.GaussianNB',
-    'AdaBoostClassifier': 'sklearn.ensemble.AdaBoostClassifier', # missing
+    'AdaBoostClassifier': 'sklearn.ensemble.AdaBoostClassifier',  # missing
     'KNeighborsClassifier': 'sklearn.neighbors.KNeighborsClassifier',
     'BaggingClassifier': 'sklearn.ensemble.BaggingClassifier',
     'ExtraTreesClassifier': 'sklearn.ensemble.ExtraTreesClassifier',
@@ -127,14 +121,14 @@ LOGICAL_TO_PHYSICAL_TABLE = {
     # regression
     'SVR': 'sklearn.svm.SVR',
     'LinearSVR': 'sklearn.svm.LinearSVR',
-    'LinearRegression': 'sklearn.linear_model.LinearRegression', # missing
+    'LinearRegression': 'sklearn.linear_model.LinearRegression',  # missing
     'Ridge': 'sklearn.linear_model.Ridge',
     'SGDRegressor': 'sklearn.linear_model.SGDRegressor',
     'RandomForestRegressor': 'sklearn.ensemble.RandomForestRegressor',
     'GaussianProcessRegressor': 'sklearn.gaussian_process.GaussianProcessRegressor',
-    'AdaBoostRegressor': 'sklearn.ensemble.AdaBoostRegressor', # missing
+    'AdaBoostRegressor': 'sklearn.ensemble.AdaBoostRegressor',  # missing
     'KNeighborsRegressor': 'sklearn.neighbors.KNeighborsRegressor',
-    'BaggingRegressor': 'sklearn.ensemble.BaggingRegressor', # missing
+    'BaggingRegressor': 'sklearn.ensemble.BaggingRegressor',  # missing
     'ExtraTreesRegressor': 'sklearn.ensemble.ExtraTreesRegressor',
     'GradientBoostingRegressor': 'sklearn.ensemble.GradientBoostingRegressor',
     'XGradientBoostingRegressor': 'xgboost.XGBRegressor',

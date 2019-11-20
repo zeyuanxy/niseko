@@ -29,7 +29,8 @@ class NisekoPipelineStep:
         self._hyperparameters = hyperparameters
 
     def get_hyperparameters_vector(self):
-        return list(map(lambda item: item[1], sorted(map(lambda item: (item[0], float(item[1])), self.hyperparameters.items()))))
+        return list(map(lambda item: item[1], sorted(map(lambda item: (item[0], float(item[1])),
+                                                         self.hyperparameters.items()))))
 
 
 class NisekoPipelineRun:
@@ -110,7 +111,7 @@ class NisekoPipeline:
                 progression = pd.DataFrame.from_dict(json.loads(self.pipeline_json['metrics']['progression']))
                 for _, pipeline_run in progression.iterrows():
                     pipeline_runs.append(NisekoPipelineRun(pipeline_run))
-            except:
+            except BaseException:
                 pass
             self.pipeline_runs = pipeline_runs
             self.pipeline_json = None
