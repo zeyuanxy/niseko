@@ -1,30 +1,43 @@
 """Niseko dataset."""
+
 import os
 import json
 import traceback
 
 import numpy as np
 import pandas as pd
-from autosklearn.metalearning.metafeatures.metafeature import DatasetMetafeatures
 
+from .meta_feature.meta_feature import DatasetMetafeatures
 from .pipeline import NisekoPipeline, NisekoPipelineRun
 
 
 class NisekoDataset:
 
-    def __init__(self, dataset_id, task_type, dumps_dir):
-        self.dataset_id = dataset_id
-        self.task_type = task_type
-        self.dumps_dir = dumps_dir
+    def __init__(self, dataset_id, task_type, data_dir):
+        self._dataset_id = dataset_id
+        self._task_type = task_type
+        self._data_dir = data_dir
 
         # load meta features
-        meta_features = DatasetMetafeatures.load(os.path.join(os.path.dirname(__file__), 'meta_features', '{}.arff'.format(dataset_id)))
-        sorted_meta_features = sorted(list(map(lambda meta_feature: (meta_feature.name, meta_feature.value),
-                                               meta_features.metafeature_values)))
+        meta_features = DatasetMetafeatures.load(os.path.join(data_dir, 'meta_features', '{}.arff'.format(dataset_id)))
+        # sorted_meta_features = sorted(list(map(lambda meta_feature: (meta_feature.name, meta_feature.value),
+        #                                        meta_features.metafeature_values)))
         meta_features.metafeature_values = dict(map(lambda meta_feature: (meta_feature.name, meta_feature),
                                                     meta_features.metafeature_values))
-        self.meta_features = meta_features
-        self.meta_features_values = np.array(list(map(lambda x: x[1], sorted_meta_features)))
+        self._meta_features = meta_features
+        # self.meta_features_values = np.array(list(map(lambda x: x[1], sorted_meta_features)))
+
+    @property
+    def dataset_id(self):
+        return self._dataset_id
+
+    @property
+    def task_type(self):
+        return self._task_type
+
+    @property
+    def meta_features(self):
+        return self._meta_features
 
     @property
     def num_features(self):
@@ -33,11 +46,6 @@ class NisekoDataset:
     def show_stats(self):
         print('Task Type: {}'.format(self.task_type))
         print(self.meta_features)
-
-    def get_data(self):
-        csv_path = os.path.join(os.path.dirname(__file__), os.pardir, "datasets", self.dataset_id,
-                                self.dataset_id + "_dataset", "tables", "learningData.csv")
-        return pd.read_csv(csv_path)
 
     def get_pipelines(self, order_by=None, num=None, clean=True, normalize=False):
         pipelines = self._get_pipelines()
@@ -67,7 +75,7 @@ class NisekoDataset:
     def _get_pipelines(self):
         all_pipelines = []
         read_files = set()
-        for root_dir, sub_dirs, _ in os.walk(self.dumps_dir):
+        for root_dir, sub_dirs, _ in os.walk(self._data_dir):
             pipelines_path = os.path.join(root_dir, '{}_pipelines.json'.format(self.dataset_id))
             if os.path.isfile(pipelines_path) and pipelines_path not in read_files:
                 read_files.add(pipelines_path)
