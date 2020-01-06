@@ -31,6 +31,7 @@ If you have any questions about Niseko, please reach out to [zeyuanxy@gmail.com]
 
 If you find the idea or code useful for your research, please cite our paper:
 
+```
 @inproceedings{shang2019metalearn,
   title={ME-Net: Towards Effective Adversarial Robustness with Matrix Estimation},
   author={Shang, Zeyuan and Zgraggen, Emanuel and Eichmann, Philipp and Kraska, Tim},
@@ -38,3 +39,4 @@ If you find the idea or code useful for your research, please cite our paper:
   year={2019},
   url={http://metalearning.ml/2019/papers/metalearn2019-shang.pdf},
 }
+```
