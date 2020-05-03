@@ -8,11 +8,11 @@ import traceback
 import numpy as np
 import pandas as pd
 
-from .meta_feature.meta_feature import DatasetMetafeatures
-from .pipeline import NisekoPipeline, NisekoPipelineRun
+from .meta_features import MetaFeatures
+# from .pipeline import NisekoPipeline, NisekoPipelineRun
 
 
-class Dataset:
+class NisekoDataset:
     """
     Dataset class.
     """
@@ -23,13 +23,8 @@ class Dataset:
         self._data_dir = data_dir
 
         # load meta features
-        meta_features = DatasetMetafeatures.load(os.path.join(data_dir, 'meta_features', '{}.arff'.format(dataset_id)))
-        # sorted_meta_features = sorted(list(map(lambda meta_feature: (meta_feature.name, meta_feature.value),
-        #                                        meta_features.metafeature_values)))
-        meta_features.metafeature_values = dict(map(lambda meta_feature: (meta_feature.name, meta_feature),
-                                                    meta_features.metafeature_values))
+        meta_features = MetaFeatures.load(os.path.join(data_dir, 'meta_features', '{}.arff'.format(dataset_id)))
         self._meta_features = meta_features
-        # self.meta_features_values = np.array(list(map(lambda x: x[1], sorted_meta_features)))
 
     @property
     def dataset_id(self):

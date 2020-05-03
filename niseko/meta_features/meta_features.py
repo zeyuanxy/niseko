@@ -1,7 +1,4 @@
-# pylint: disable=missing-docstring, unused-argument, invalid-name, no-else-return, len-as-condition,
-# pylint: disable=redefined-builtin, simplifiable-if-expression, unused-variable, pointless-string-statement
-# pylint: disable=no-else-raise, unnecessary-comprehension
-
+# pylint: skip-file
 from collections import defaultdict, OrderedDict, deque
 import copy
 
@@ -13,15 +10,15 @@ from sklearn.utils import check_array
 from sklearn.multiclass import OneVsRestClassifier
 
 from sklearn.preprocessing import Imputer
-from .one_hot_encoder import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
 
+from alpine_meadow.backend.default.utils.one_hot_encoder import OneHotEncoder
 from .meta_feature import MetaFeature, HelperFunction, DatasetMetafeatures
 
 
 # TODO Allow multiple dependencies for a metafeature
 # TODO Add HelperFunction as an object
-class HelperFunctions:
+class HelperFunctions(object):
     def __init__(self):
         self.functions = OrderedDict()
         self.values = OrderedDict()
@@ -70,7 +67,7 @@ class HelperFunctions:
         return wrapper
 
 
-class MetafeatureFunctions:
+class MetafeatureFunctions(object):
     def __init__(self):
         self.functions = OrderedDict()
         self.dependencies = OrderedDict()
@@ -129,6 +126,8 @@ metafeatures = MetafeatureFunctions()
 helper_functions = HelperFunctions()
 
 
+################################################################################
+# Simple features
 @metafeatures.define("NumberOfInstances")
 class NumberOfInstances(MetaFeature):
     def _calculate(self, X, y, categorical):
@@ -209,7 +208,8 @@ class PercentageOfInstancesWithMissingValues(MetaFeature):
                      / float(metafeatures["NumberOfInstances"](X, y).value))
 
 
-@metafeatures.define("NumberOfFeaturesWithMissingValues", dependency="MissingValues")
+@metafeatures.define("NumberOfFeaturesWithMissingValues",
+                     dependency="MissingValues")
 class NumberOfFeaturesWithMissingValues(MetaFeature):
     def _calculate(self, X, y, categorical):
         missing = helper_functions.get_value("MissingValues")
@@ -220,7 +220,8 @@ class NumberOfFeaturesWithMissingValues(MetaFeature):
         missing = helper_functions.get_value("MissingValues")
         new_missing = missing.tocsc()
         num_missing = [np.sum(
-            new_missing.data[new_missing.indptr[i]:new_missing.indptr[i + 1]]) for i in range(missing.shape[1])]
+            new_missing.data[new_missing.indptr[i]:new_missing.indptr[i + 1]])
+            for i in range(missing.shape[1])]
 
         return float(np.sum([1 if num > 0 else 0 for num in num_missing]))
 

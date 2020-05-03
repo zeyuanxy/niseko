@@ -1,7 +1,4 @@
-"""Meta feature class.
-Adopted from https://github.com/automl/auto-sklearn/tree/master/autosklearn/metalearning/metafeatures"""
-# pylint: disable=invalid-name, redefined-outer-name, redefined-builtin
-
+# pylint: skip-file
 from abc import ABCMeta, abstractmethod
 from io import StringIO
 import time
@@ -10,9 +7,7 @@ import arff
 import scipy.sparse
 
 
-class AbstractMetaFeature:
-    """Abstract class for meta feature."""
-
+class AbstractMetaFeature(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
@@ -20,7 +15,7 @@ class AbstractMetaFeature:
         pass
 
     @abstractmethod
-    def _calculate(self, X, y, categorical):
+    def _calculate(cls, X, y, categorical):
         pass
 
     def __call__(self, X, y, categorical=None):
@@ -44,30 +39,18 @@ class AbstractMetaFeature:
 
 
 class MetaFeature(AbstractMetaFeature):
-
     def __init__(self):
         super(MetaFeature, self).__init__()
         self.type_ = "METAFEATURE"
 
-    @abstractmethod
-    def _calculate(self, X, y, categorical):
-        pass
-
 
 class HelperFunction(AbstractMetaFeature):
-
     def __init__(self):
         super(HelperFunction, self).__init__()
         self.type_ = "HELPERFUNCTION"
 
-    @abstractmethod
-    def _calculate(self, X, y, categorical):
-        pass
 
-
-class MetaFeatureValue:
-    """Value for meta feature."""
-
+class MetaFeatureValue(object):
     def __init__(self, name, type_, fold, repeat, value, time, comment=""):
         self.name = name
         self.type_ = type_
@@ -95,19 +78,12 @@ class MetaFeatureValue:
         return repr
 
 
-class DatasetMetafeatures:
-    """Meat features class for a dataset."""
-
+class DatasetMetafeatures(object):
     def __init__(self, dataset_name, metafeature_values):
         self.dataset_name = dataset_name
         self.metafeature_values = metafeature_values
 
     def _get_arff(self):
-        """
-        make a dict of description to be exported as an arff file.
-        :return:
-        """
-
         output = dict()
         output['relation'] = "metafeatures_%s" % (self.dataset_name)
         output['description'] = ""
@@ -138,11 +114,6 @@ class DatasetMetafeatures:
 
     @classmethod
     def load(cls, path_or_filehandle):
-        """
-        Load from an arff file.
-        :param path_or_filehandle:
-        :return:
-        """
 
         if isinstance(path_or_filehandle, str):
             with open(path_or_filehandle) as fh:
@@ -151,10 +122,20 @@ class DatasetMetafeatures:
             input = arff.load(path_or_filehandle)
 
         dataset_name = input['relation'].replace('metafeatures_', '')
-        metafeature_values = []
+        metafeature_values = {}
         for item in input['data']:
             mf = MetaFeatureValue(*item)
-            metafeature_values.append(mf)
+            metafeature_values[mf.name] = mf
+
+        return cls(dataset_name, metafeature_values)
+
+    @classmethod
+    def load_from_dict(cls, input):
+        dataset_name = input['relation'].replace('metafeatures_', '')
+        metafeature_values = {}
+        for item in input['data']:
+            mf = MetaFeatureValue(*item)
+            metafeature_values[mf.name] = mf
 
         return cls(dataset_name, metafeature_values)
 

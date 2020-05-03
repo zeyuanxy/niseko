@@ -1,3 +1,3 @@
 """Niseko"""
 
-from .context import get_context  # noqa: F401
+from .context import NisekoContext  # noqa: F401

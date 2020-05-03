@@ -1,5 +1,7 @@
+liac-arff
 numpy
 pandas
 jupyter
 seaborn
 pandas
+pytest
