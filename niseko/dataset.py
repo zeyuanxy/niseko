@@ -1,5 +1,5 @@
-"""Niseko dataset."""
 # pylint: disable=broad-except
+"""Niseko dataset."""
 
 import os
 import json
@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 
 from .meta_features import MetaFeatures
+from .pipeline import NisekoPipeline
 # from .pipeline import NisekoPipeline, NisekoPipelineRun
 
 
@@ -37,6 +38,10 @@ class NisekoDataset:
     @property
     def meta_features(self):
         return self._meta_features
+
+    @property
+    def num_instances(self):
+        return self.meta_features['NumberOfInstances'].value
 
     @property
     def num_features(self):
@@ -89,13 +94,13 @@ class NisekoDataset:
         all_pipelines = []
         read_files = set()
         for root_dir, sub_dirs, _ in os.walk(self._data_dir):
-            pipelines_path = os.path.join(root_dir, '{}_pipelines.json'.format(self.dataset_id))
-            if os.path.isfile(pipelines_path) and pipelines_path not in read_files:
-                read_files.add(pipelines_path)
+            traces_path = os.path.join(root_dir, '{}.json'.format(self.dataset_id))
+            if os.path.isfile(traces_path) and traces_path not in read_files:
+                read_files.add(traces_path)
                 try:
-                    with open(pipelines_path, 'r') as f:
-                        pipelines = json.load(f)
-                    for pipeline in pipelines:
+                    with open(traces_path, 'r') as f:
+                        traces = json.load(f)
+                    for pipeline in traces['pipelines']:
                         all_pipelines.append(NisekoPipeline.load_from_json(pipeline))
                 except BaseException:
                     traceback.print_exc()

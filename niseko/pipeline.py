@@ -1,5 +1,5 @@
-"""Niseko pipeline."""
 # pylint: disable=broad-except
+"""Niseko pipeline."""
 
 import json
 
@@ -8,7 +8,7 @@ import pandas as pd
 from .export import convert_pipeline_to_script
 
 
-class PipelineStep:
+class NisekoPipelineStep:
     """
     Pipeline step.
     """
@@ -35,7 +35,7 @@ class PipelineStep:
                                                          self.hyperparameters.items()))))
 
 
-class PipelineRun:
+class NisekoPipelineRun:
     """
     This class stores the information of a pipeline run.
     """
@@ -63,7 +63,7 @@ class PipelineRun:
         return self._row['validation_error']
 
 
-class Pipeline:
+class NisekoPipeline:
     """
     Pipeline class.
     """
@@ -169,7 +169,7 @@ class Pipeline:
         :return:
         """
 
-        pipeline = Pipeline()
+        pipeline = NisekoPipeline()
         pipeline.score = pipeline_json['metrics']['score']
         pipeline.model = pipeline_json['tags']['model']
 
